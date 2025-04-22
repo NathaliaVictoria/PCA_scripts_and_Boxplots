@@ -1,0 +1,102 @@
+## Requirements
+
+# Make sure you have the following R packages installed:
+install.packages("ggplot2")
+install.packages("xlsx")
+install.packages("tidyverse")
+install.packages("colorspace")
+install.packages("rcartocolor")
+install.packages("gghalves")
+install.packages("systemfonts")
+
+# Load libraries
+library(ggplot2)
+library(ggbiplot)
+library(xlsx)
+library(tidyverse)     ## data wrangling + ggplot2
+library(colorspace)    ## adjust colors
+library(rcartocolor)   ## Carto palettes
+library(gghalves)      ## off-set jitter
+library(systemfonts)   ## custom fonts
+
+# ============================================
+# Customizing the general appearance of plots
+# ============================================
+
+theme_update(
+  axis.text.x = element_text(face = "plain", size = 14,
+                             hjust = 0.5, angle = 360,
+                             margin = margin(t = 6)),
+  axis.text.y = element_text(size = 14, hjust = 1, 
+                             margin = margin(r = 2)),
+  axis.line.x = element_line(color = "black", size = 0.5),
+  axis.title = element_text(size = 16),
+  panel.grid.major.y = element_line(color = "grey", size = 0.6),
+  plot.background = element_rect(fill = "white", color = "white"),
+  plot.margin = margin(rep(20, 4))
+)
+
+# Custom color palette using Carto colors
+my_pal <- rcartocolor::carto_pal(n = 7, name = "Bold")[c(3, 2, 1)]
+
+# ============================================
+# Creating boxplots for the data
+# ============================================
+
+# === Import the data ===
+# Replace "yourfile.txt" with the name of your data file (e.g., .txt or .csv)
+# Make sure the data file is in the same directory as the script, or provide the relative path
+data <- read.table("yourfile.txt", header = TRUE) # load the dataset
+summary(data) # dataset summary
+
+# Boxplot for variable 1 (e.g., Frequency 1)
+g <- ggplot(data, aes(x = group, y = variable_1, color = group, fill = group)) +
+  scale_color_manual(values = my_pal, guide = "none") +
+  scale_fill_manual(values = my_pal, guide = "none") +
+  scale_x_discrete(limits = c("Group1", "Group2", "Group3")) +  
+  labs(x = "Group", y = "Variable 1") +
+  geom_boxplot(alpha = .5, size = 1, outlier.size = 5)
+
+# Boxplot for variable 2 (e.g., Frequency 2)
+g1 <- ggplot(data, aes(x = group, y = variable_2, color = group, fill = group)) +
+  scale_color_manual(values = my_pal, guide = "none") +
+  scale_fill_manual(values = my_pal, guide = "none") +
+  scale_x_discrete(limits = c("Group1", "Group2", "Group3")) +
+  labs(x = "Group", y = "Variable 2") +
+  geom_boxplot(alpha = .5, size = 1, outlier.size = 5)
+
+# Boxplot for variable 3 (e.g., Duration)
+g2 <- ggplot(data, aes(x = group, y = variable_3, color = group, fill = group)) +
+  scale_color_manual(values = my_pal, guide = "none") +
+  scale_fill_manual(values = my_pal, guide = "none") +
+  scale_x_discrete(limits = c("Group1", "Group2", "Group3")) +
+  labs(x = "Group", y = "Variable 3") +
+  geom_boxplot(alpha = .5, size = 1, outlier.size = 5)
+
+# ============================================
+# Enhanced Boxplots with Jitter Strips (use this when possible)
+# ============================================
+
+# Boxplot with jitter for Variable 1
+g + 
+  geom_boxplot(aes(fill = group, fill = after_scale(colorspace::lighten(fill, .7))),
+               size = 1, outlier.shape = NA) +
+  geom_jitter(width = .1, size = 5, alpha = .5)
+
+# Boxplot with jitter for Variable 2
+g1 + 
+  geom_boxplot(aes(fill = group, fill = after_scale(colorspace::lighten(fill, .7))),
+               size = 1, outlier.shape = NA) +
+  geom_jitter(width = .1, size = 5, alpha = .5)
+
+# Boxplot with jitter for Variable 3
+g2 + 
+  geom_boxplot(aes(fill = group, fill = after_scale(colorspace::lighten(fill, .7))),
+               size = 1, outlier.shape = NA) +
+  geom_jitter(width = .1, size = 5, alpha = .5)
+
+# ============================================
+# To create more boxplots for additional variables, simply repeat the code
+# for each variable you want to plot. Change the variable names (e.g., variable_4, variable_5) 
+# and update the axis labels accordingly.
+# ============================================

@@ -1,0 +1,60 @@
+## Requirements
+
+# Make sure you have the following R packages installed:
+install.packages("MASS")
+install.packages("devtools")
+devtools::install_github("vqv/ggbiplot") #The ggbiplot package is not available on CRAN and must be installed from GitHub using devtools::install_github().
+install.packages("rcartocolor")
+
+
+# Load required packages
+library(MASS)
+library(ggbiplot)
+library(rcartocolor)
+
+# ============================================
+# Principal Component Analysis (PCA)
+# ============================================
+
+# === Data Import ===
+# Replace "yourfile.txt" with the name of your data file (.txt or .csv format)
+# Make sure the file is in the same directory as this script or provide a relative path
+data <- read.table("yourfile.txt", header = TRUE)
+
+# === Performing PCA ===
+# Adjust the column range as needed to select only numeric variables
+# In this example, columns 3 to 6 from the first 104 rows are used
+pca_result <- prcomp(data[1:104, 3:6], center = TRUE, scale. = TRUE)
+
+# PCA summary
+summary(pca_result)
+pca_result
+
+# === Visualizations ===
+
+# Basic PCA plot
+ggbiplot(pca_result)
+
+# PCA plot with ellipses and groups
+ggbiplot(pca_result, ellipse = TRUE, groups = data$taxon)
+
+# === Custom color palette ===
+# Replace or reorder the indices according to the number and order of your groups
+color_palette <- rcartocolor::carto_pal(n = 7, name = "Bold")[c(1, 3, 2)]
+
+# Final customized PCA plot
+p <- ggbiplot(pca_result, 
+              ellipse = TRUE, 
+              groups = data$taxon, 
+              var.axes = TRUE) + 
+  theme_gray() +
+  theme(legend.position = "right") +
+  labs(x = "PC1", y = "PC2", colour = "Group:") +  # Replace with actual percentages if desired
+  theme(axis.title.x = element_text(size = 16),
+        axis.title.y = element_text(size = 16),
+        legend.title = element_text(size = 16, face = "bold"),
+        legend.text = element_text(size = 16)) +
+  scale_color_manual(values = color_palette)
+
+# Display the plot
+print(p)
