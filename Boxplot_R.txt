@@ -74,7 +74,7 @@ g2 <- ggplot(data, aes(x = group, y = variable_3, color = group, fill = group)) 
   geom_boxplot(alpha = .5, size = 1, outlier.size = 5)
 
 # ============================================
-# Enhanced Boxplots with Jitter Strips (use this when possible)
+# Enhanced Boxplots with Jitter Strips
 # ============================================
 
 # Boxplot with jitter for Variable 1
